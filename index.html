@@ -65,7 +65,60 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+
+    const listElement = document.querySelector(".comments");
+    const nameInput = document.querySelector(".add-form-name");
+    const commentInput = document.querySelector(".add-form-text");
+    const addButton = document.querySelector(".add-form-button");
+
+    function checkInputs() {
+      addButton.disabled =
+        nameInput.value.trim() === "" || commentInput.value.trim() === "";
+    }
+    nameInput.addEventListener("input", () => {
+      addButton.disabled =
+        nameInput.value.trim() === "" || commentInput.value.trim() === "";
+    });
+
+    commentInput.addEventListener("input", () => {
+      addButton.disabled =
+        nameInput.value.trim() === "" || commentInput.value.trim() === "";
+    });
+
+    addButton.addEventListener("click", () => {
+      if (nameInput.value.trim() === "" || commentInput.value.trim() === "") {
+        return;
+      }
+
+      const date = new Date().toLocaleString().slice(0, -3);
+
+      const newCommentHtml = `
+        <li class="comment">
+            <div class="comment-header">
+                <div>${nameInput.value}</div>
+                <div>${date}</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">
+                    ${commentInput.value}
+                </div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+        </li>
+    `;
+
+      listElement.innerHTML = listElement.innerHTML + newCommentHtml;
+
+      nameInput.value = "";
+      commentInput.value = "";
+      addButton.disabled = true;
+    });
+
     console.log("It works!");
   </script>
 </html>
