@@ -71,19 +71,89 @@
     const commentInput = document.querySelector(".add-form-text");
     const addButton = document.querySelector(".add-form-button");
 
-    function checkInputs() {
-      addButton.disabled =
-        nameInput.value.trim() === "" || commentInput.value.trim() === "";
-    }
-    nameInput.addEventListener("input", () => {
-      addButton.disabled =
-        nameInput.value.trim() === "" || commentInput.value.trim() === "";
-    });
+    const sanitizeHtml = (htmlString) => {
+      return htmlString
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    };
 
-    commentInput.addEventListener("input", () => {
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isLiked: false,
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        isLiked: false,
+      },
+    ];
+
+    const pushLikeButtons = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", () => {
+          const index = likeButton.dataset.index;
+          const comment = comments[index];
+
+          if (comment.isLiked) {
+            comment.likes -= 1;
+            comment.isLiked = false;
+          } else {
+            comment.likes += 1;
+            comment.isLiked = true;
+          }
+          renderComments();
+        });
+      }
+    };
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+      <div class="comment-header">
+        <div>${comment.name}</div>
+        <div>${comment.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${comment.text}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button data-index="${index}" class="like-button ${
+            comment.isLiked ? "-active-like" : ""
+          }"></button>
+        </div>
+      </div>
+    </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = commentsHtml;
+      pushLikeButtons();
+    };
+
+    renderComments();
+
+    const checkInputs = () => {
       addButton.disabled =
         nameInput.value.trim() === "" || commentInput.value.trim() === "";
-    });
+    };
+
+    nameInput.addEventListener("input", checkInputs);
+    commentInput.addEventListener("input", checkInputs);
 
     addButton.addEventListener("click", () => {
       if (nameInput.value.trim() === "" || commentInput.value.trim() === "") {
@@ -92,32 +162,21 @@
 
       const date = new Date().toLocaleString().slice(0, -3);
 
-      const newCommentHtml = `
-        <li class="comment">
-            <div class="comment-header">
-                <div>${nameInput.value}</div>
-                <div>${date}</div>
-            </div>
-            <div class="comment-body"             <div class="comment-text">
-                    ${commentInput.value}
-                </div>
-            </div>
-            <div class="comment-footer">
-                <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button"></button>
-                </div>
-            </div>
-        </li>
-    `;
+      comments.push({
+        name: sanitizeHtml(nameInput.value),
+        date: date,
+        text: sanitizeHtml(commentInput.value),
+        likes: 0,
+        isLiked: false,
+      });
 
-      listElement.innerHTML = listElement.innerHTML + newCommentHtml;
+      renderComments();
 
       nameInput.value = "";
       commentInput.value = "";
       addButton.disabled = true;
     });
-    // здесь код
+
     console.log("It works!");
   </script>
 </html>
