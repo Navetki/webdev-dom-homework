@@ -100,7 +100,8 @@
       const likeButtons = document.querySelectorAll(".like-button");
 
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener("click", () => {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = likeButton.dataset.index;
           const comment = comments[index];
 
@@ -116,10 +117,22 @@
       }
     };
 
+    const ReplyComments = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.index;
+          const comment = comments[index];
+          commentInput.value = `> ${comment.text}\n${comment.name}, `;
+          commentInput.focus();
+        });
+      }
+    };
+
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment">
+          return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
@@ -143,6 +156,7 @@
 
       listElement.innerHTML = commentsHtml;
       pushLikeButtons();
+      ReplyComments();
     };
 
     renderComments();
