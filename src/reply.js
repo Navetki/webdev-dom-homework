@@ -1,9 +1,7 @@
-import { comments } from "./comments.js";
-
 const listElement = document.querySelector(".comments");
 const commentInput = document.querySelector(".add-form-text");
 
-const pushLikeButtons = () => {
+const pushLikeButtons = (comments) => {
   const likeButtons = document.querySelectorAll(".like-button");
 
   for (const likeButton of likeButtons) {
@@ -19,12 +17,12 @@ const pushLikeButtons = () => {
         comment.likes += 1;
         comment.isLiked = true;
       }
-      renderComments();
+      renderComments(comments);
     });
   }
 };
 
-const ReplyComments = () => {
+const ReplyComments = (comments) => {
   const commentElements = document.querySelectorAll(".comment");
   for (const commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
@@ -36,7 +34,7 @@ const ReplyComments = () => {
   }
 };
 
-export const renderComments = () => {
+export const renderComments = (comments) => {
   const commentsHtml = comments
     .map((comment, index) => {
       return `<li class="comment" data-index="${index}">
@@ -62,6 +60,6 @@ export const renderComments = () => {
     .join("");
 
   listElement.innerHTML = commentsHtml;
-  pushLikeButtons();
-  ReplyComments();
+  pushLikeButtons(comments);
+  ReplyComments(comments);
 };
