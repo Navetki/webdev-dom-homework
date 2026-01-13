@@ -1,33 +1,17 @@
-import { renderComments } from "./reply.js";
 import { sanitizeHtml } from "./sanitize.js";
-import { fetchRender, fetchComment } from "./api.js";
+import { fetchComment } from "./api.js";
+import { fetchgetAndRenderComments } from "./fetchAndRenderTasks.js";
 
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 const addButton = document.querySelector(".add-form-button");
+const addFormElement = document.getElementById("add-form");
+const listLoader = document.getElementById("list-loader");
+const formLoader = document.getElementById("form-loader");
 
-let comments = [];
-
-const fetchRenderComments = () => {
-  return fetchRender()
-    .then((responseData) => {
-      comments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleString().slice(0, -3),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: comment.isLiked,
-        };
-      });
-      renderComments(comments);
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-};
-
-fetchRenderComments();
+fetchgetAndRenderComments(listLoader).catch((error) => {
+  alert("Ошибка загрузки" + error.message);
+});
 
 addButton.addEventListener("click", () => {
   const name = nameInput.value;
@@ -38,22 +22,25 @@ addButton.addEventListener("click", () => {
     return;
   }
 
+  if (addFormElement) addFormElement.style.display = "none";
+  if (formLoader) formLoader.style.display = "block";
+
   fetchComment({
     name: sanitizeHtml(name),
     text: sanitizeHtml(text),
   })
     .then(() => {
-      return fetchRenderComments();
+      return fetchgetAndRenderComments(listLoader);
     })
     .then(() => {
-      addButton.disabled = false;
-      addButton.textContent = "Написать";
+      if (formLoader) formLoader.style.display = "none";
+      if (addFormElement) addFormElement.style.display = "flex";
       nameInput.value = "";
       commentInput.value = "";
     })
     .catch((error) => {
-      addButton.disabled = false;
-      addButton.textContent = "Написать";
+      formLoader.style.display = "none";
+      addFormElement.style.display = "flex";
       alert(error.message);
     });
 });

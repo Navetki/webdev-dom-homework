@@ -1,6 +1,14 @@
 const listElement = document.querySelector(".comments");
 const commentInput = document.querySelector(".add-form-text");
 
+function like(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+
 const pushLikeButtons = (comments) => {
   const likeButtons = document.querySelectorAll(".like-button");
 
@@ -10,14 +18,20 @@ const pushLikeButtons = (comments) => {
       const index = likeButton.dataset.index;
       const comment = comments[index];
 
-      if (comment.isLiked) {
-        comment.likes -= 1;
-        comment.isLiked = false;
-      } else {
-        comment.likes += 1;
-        comment.isLiked = true;
+      if (comment.isLikeLoading) {
+        return;
       }
+
+      comment.isLikeLoading = true;
       renderComments(comments);
+
+      like(2000).then(() => {
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+
+        comment.isLikeLoading = false;
+        renderComments(comments);
+      });
     });
   }
 };
@@ -52,7 +66,7 @@ export const renderComments = (comments) => {
           <span class="likes-counter">${comment.likes}</span>
           <button data-index="${index}" class="like-button ${
             comment.isLiked ? "-active-like" : ""
-          }"></button>
+          } ${comment.isLikeLoading ? "-loading-like" : ""}"></button>
         </div>
       </div>
     </li>`;
