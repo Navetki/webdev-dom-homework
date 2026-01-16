@@ -10,20 +10,20 @@ const listLoader = document.getElementById("list-loader");
 const formLoader = document.getElementById("form-loader");
 
 fetchgetAndRenderComments(listLoader).catch((error) => {
-  alert("Ошибка загрузки" + error.message);
+  alert(error.message);
 });
 
-addButton.addEventListener("click", () => {
+const userClick = () => {
   const name = nameInput.value;
   const text = commentInput.value;
 
   if (name.trim().length < 3 || text.trim().length < 3) {
-    alert("Имя и комментарий должен содержать хотя бы 3 символа");
+    alert("Имя и комментарий должны содержать хотя бы 3 символа");
     return;
   }
 
-  if (addFormElement) addFormElement.style.display = "none";
-  if (formLoader) formLoader.style.display = "block";
+  addFormElement.style.display = "none";
+  formLoader.style.display = "block";
 
   fetchComment({
     name: sanitizeHtml(name),
@@ -33,14 +33,27 @@ addButton.addEventListener("click", () => {
       return fetchgetAndRenderComments(listLoader);
     })
     .then(() => {
-      if (formLoader) formLoader.style.display = "none";
-      if (addFormElement) addFormElement.style.display = "flex";
+      formLoader.style.display = "none";
+      addFormElement.style.display = "flex";
       nameInput.value = "";
       commentInput.value = "";
     })
     .catch((error) => {
+      if (error.message === "Ошибка сервера, попробуйте позже") {
+        console.warn("Ошибка сервера, пробуем еще раз...");
+        userClick();
+        return;
+      }
+
       formLoader.style.display = "none";
       addFormElement.style.display = "flex";
-      alert(error.message);
+
+      if (error.message === "Failed to fetch") {
+        alert("Интернет пропал. Попробуйте позже");
+      } else {
+        alert(error.message);
+      }
     });
-});
+};
+
+addButton.addEventListener("click", userClick);
