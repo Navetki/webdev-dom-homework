@@ -1,6 +1,3 @@
-const listElement = document.querySelector(".comments");
-const commentInput = document.querySelector(".add-form-text");
-
 function like(interval = 300) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -9,7 +6,8 @@ function like(interval = 300) {
   });
 }
 
-const pushLikeButtons = (comments) => {
+// Переименовал функцию, чтобы было понятно, что она вешает события
+export const initLikeButtons = (comments, renderApp) => {
   const likeButtons = document.querySelectorAll(".like-button");
 
   for (const likeButton of likeButtons) {
@@ -18,38 +16,41 @@ const pushLikeButtons = (comments) => {
       const index = likeButton.dataset.index;
       const comment = comments[index];
 
-      if (comment.isLikeLoading) {
-        return;
-      }
+      if (comment.isLikeLoading) return;
 
       comment.isLikeLoading = true;
-      renderComments(comments);
+      renderApp(comments); // Вызываем отрисовку всего приложения, чтобы показать лоадер лайка
 
       like(2000).then(() => {
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
         comment.isLiked = !comment.isLiked;
-
         comment.isLikeLoading = false;
-        renderComments(comments);
+        renderApp(comments); // Перерисовываем всё приложение с обновленным лайком
       });
     });
   }
 };
 
-const ReplyComments = (comments) => {
+export const initReplyComments = (comments) => {
   const commentElements = document.querySelectorAll(".comment");
+  const commentInput = document.querySelector(".add-form-text");
+
   for (const commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
       const index = commentElement.dataset.index;
       const comment = comments[index];
-      commentInput.value = `> ${comment.text}\n${comment.name}, `;
-      commentInput.focus();
+      // Защита: если пользователь не авторизован, инпута нет, поэтому проверяем его наличие
+      if (commentInput) {
+        commentInput.value = `> ${comment.text}\n${comment.name}, `;
+        commentInput.focus();
+      }
     });
   }
 };
 
+// Эта функция теперь ТОЛЬКО возвращает строку HTML
 export const renderComments = (comments) => {
-  const commentsHtml = comments
+  return comments
     .map((comment, index) => {
       return `<li class="comment" data-index="${index}">
       <div class="comment-header">
@@ -72,8 +73,4 @@ export const renderComments = (comments) => {
     </li>`;
     })
     .join("");
-
-  listElement.innerHTML = commentsHtml;
-  pushLikeButtons(comments);
-  ReplyComments(comments);
 };
