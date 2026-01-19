@@ -3,6 +3,7 @@ import { setToken, setUserName, initApp } from "./index.js";
 import { renderLogin } from "./renderLogin.js";
 
 export const renderRegistration = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
   const app = document.getElementById("app");
   app.innerHTML = `
  <div class="container">
@@ -15,12 +16,13 @@ export const renderRegistration = () => {
       </div>
       <br />
       <button class="button" id="register-button">Зарегистрироваться</button>
-      <button class="button" id="login-link">Войти</button> 
+       <p class="form-link-text">Уже есть аккаунт? <span id="tologin-link" class="link-clickable">Войти</span>
+      </p> 
     </div>
   </div>`;
 
   const registerButton = document.getElementById("register-button");
-  const loginLink = document.getElementById("login-link");
+  const loginLink = document.getElementById("tologin-link");
 
   registerButton.addEventListener("click", () => {
     const login = document.getElementById("login-input").value;

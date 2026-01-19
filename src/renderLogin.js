@@ -3,6 +3,7 @@ import { setToken, setUserName, initApp } from "./index.js";
 import { renderRegistration } from "./renderRegistration.js";
 
 export const renderLogin = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
   const appElement = document.getElementById("app");
   appElement.innerHTML = `
   <div class="container">
@@ -15,7 +16,8 @@ export const renderLogin = () => {
 </div>
 <br />
 <button class="button" id="login-button">Войти</button>
-<button class="button" id="reg-button">Зарегистрироваться</button>
+ <p class="form-link-text"> Нет аккаунта? <span id="toreg-link" class="link-clickable">Зарегистрироваться</span> </p>
+</div>
 </div>
 `;
 
@@ -33,7 +35,7 @@ export const renderLogin = () => {
         alert(error.message);
       });
   });
-  document.getElementById("reg-button").addEventListener("click", () => {
+  document.getElementById("toreg-link").addEventListener("click", () => {
     renderRegistration();
   });
 };

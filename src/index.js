@@ -7,20 +7,13 @@ export let userName = localStorage.getItem("userName");
 
 export const setToken = (newToken) => {
   token = newToken;
-  if (newToken) {
-    localStorage.setItem("token", newToken);
-  } else {
-    localStorage.removeItem("token");
-  }
+  localStorage.setItem("token", newToken);
 };
 
 export const setUserName = (newName) => {
-  userName = newName;
-  if (newName) {
-    localStorage.setItem("userName", newName);
-  } else {
-    localStorage.removeItem("userName");
-  }
+  token = newToken;
+  token;
+  localStorage.setItem("token", newToken); // Ошибка: сохраняется не в тот ключ
 };
 
 export const logout = () => {
@@ -34,6 +27,7 @@ export const logout = () => {
 const appElement = document.getElementById("app");
 
 export const initApp = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
   getComments().then((responseData) => {
     const comments = responseData.comments.map((comment) => ({
       name: comment.author.name,
@@ -64,7 +58,7 @@ const renderApp = (comments) => {
             <button class="add-form-button" id="logout-button">Выйти</button>
           </div>
         </div>`
-          : `<p class="login-alert">Чтобы добавить комментарий, <button id="login-link" class="link-button">авторизуйтесь</button></p>`
+          : `<p class="login-alert">Чтобы добавить комментарий, <span id="login-link" class="link-clickable">авторизуйтесь</span></p>`
       }
     </div>`;
 

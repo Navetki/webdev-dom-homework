@@ -1,3 +1,5 @@
+import { token } from "./index.js";
+
 function like(interval = 300) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -6,26 +8,33 @@ function like(interval = 300) {
   });
 }
 
-// Переименовал функцию, чтобы было понятно, что она вешает события
 export const initLikeButtons = (comments, renderApp) => {
   const likeButtons = document.querySelectorAll(".like-button");
 
   for (const likeButton of likeButtons) {
     likeButton.addEventListener("click", (event) => {
       event.stopPropagation();
+
+      // Проверка авторизации
+      if (!token) {
+        alert("Чтобы ставить лайки, пожалуйста, авторизуйтесь.");
+        return;
+      }
+
       const index = likeButton.dataset.index;
       const comment = comments[index];
 
       if (comment.isLikeLoading) return;
 
       comment.isLikeLoading = true;
-      renderApp(comments); // Вызываем отрисовку всего приложения, чтобы показать лоадер лайка
+      renderApp(comments);
 
       like(2000).then(() => {
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
         comment.isLiked = !comment.isLiked;
         comment.isLikeLoading = false;
-        renderApp(comments); // Перерисовываем всё приложение с обновленным лайком
+
+        renderApp(comments);
       });
     });
   }
@@ -39,7 +48,7 @@ export const initReplyComments = (comments) => {
     commentElement.addEventListener("click", () => {
       const index = commentElement.dataset.index;
       const comment = comments[index];
-      // Защита: если пользователь не авторизован, инпута нет, поэтому проверяем его наличие
+
       if (commentInput) {
         commentInput.value = `> ${comment.text}\n${comment.name}, `;
         commentInput.focus();
@@ -48,7 +57,6 @@ export const initReplyComments = (comments) => {
   }
 };
 
-// Эта функция теперь ТОЛЬКО возвращает строку HTML
 export const renderComments = (comments) => {
   return comments
     .map((comment, index) => {

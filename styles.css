@@ -165,7 +165,7 @@ body {
 }
 .login-alert {
   margin-top: 32px;
-  font-size: 32px;
+  font-size: 24px;
 }
 
 .link-button {
@@ -196,4 +196,27 @@ body {
   padding: 10px;
   font-size: 18px;
   background-color: #e9f1d4;
+}
+
+.form-link-text {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.link-clickable {
+  color: rgb(245, 245, 77);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 26px;
+}
+
+.link-clickable:hover {
+  color: rgb(242, 189, 91);
+}
+
+html {
+  scroll-behavior: smooth;
 }
