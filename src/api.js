@@ -15,7 +15,9 @@ export const getComments = () => {
 export const postComment = ({ text, token }) => {
   return fetch(baseUrl + "/comments", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ text }),
   }).then((response) => {
     if (response.status === 400)
@@ -29,6 +31,7 @@ export const postComment = ({ text, token }) => {
 export const loginUser = ({ login, password }) => {
   return fetch(userUrl + "/login", {
     method: "POST",
+
     body: JSON.stringify({ login, password }),
   }).then((response) => {
     if (response.status === 400) throw new Error("Неверный логин или пароль");
@@ -40,6 +43,7 @@ export const loginUser = ({ login, password }) => {
 export const registration = ({ login, name, password }) => {
   return fetch(userUrl, {
     method: "POST",
+
     body: JSON.stringify({ login, name, password }),
   }).then((response) => {
     if (response.status === 400) {

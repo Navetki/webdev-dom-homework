@@ -16,7 +16,7 @@ export const renderRegistration = () => {
       </div>
       <br />
       <button class="button" id="register-button">Зарегистрироваться</button>
-       <p class="form-link-text">Уже есть аккаунт? <span id="tologin-link" class="link-clickable">Войти</span>
+       <p class="form-link-text">Уже есть аккаунт? <a id="tologin-link" href="#" class="link-clickable">Войти</a>
       </p> 
     </div>
   </div>`;
@@ -43,7 +43,8 @@ export const renderRegistration = () => {
       .catch((error) => alert(error.message));
   });
 
-  loginLink.addEventListener("click", () => {
+  loginLink.addEventListener("click", (event) => {
+    event.preventDefault();
     renderLogin();
   });
 };

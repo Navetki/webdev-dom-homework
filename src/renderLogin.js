@@ -16,14 +16,22 @@ export const renderLogin = () => {
 </div>
 <br />
 <button class="button" id="login-button">Войти</button>
- <p class="form-link-text"> Нет аккаунта? <span id="toreg-link" class="link-clickable">Зарегистрироваться</span> </p>
+ <p class="form-link-text"> Нет аккаунта? <a id="toreg-link" href="#" class="link-clickable">Зарегистрироваться</a> </p>
 </div>
 </div>
 `;
 
+  document.getElementById("login-input").value = "";
+  document.getElementById("password-input").value = "";
+
+
   document.getElementById("login-button").addEventListener("click", () => {
     const loginValue = document.getElementById("login-input").value;
     const passwordValue = document.getElementById("password-input").value;
+
+    if (!loginValue || !passwordValue) {
+      alert("Введите логин и пароль");
+      return; }
 
     loginUser({ login: loginValue, password: passwordValue })
       .then((responseData) => {
@@ -35,7 +43,8 @@ export const renderLogin = () => {
         alert(error.message);
       });
   });
-  document.getElementById("toreg-link").addEventListener("click", () => {
+    document.getElementById("toreg-link").addEventListener("click", (event) => {
+    event.preventDefault(); 
     renderRegistration();
   });
 };

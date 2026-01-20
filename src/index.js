@@ -11,9 +11,8 @@ export const setToken = (newToken) => {
 };
 
 export const setUserName = (newName) => {
-  token = newToken;
-  token;
-  localStorage.setItem("token", newToken); // Ошибка: сохраняется не в тот ключ
+  userName = newName;
+  localStorage.setItem("userName", newName);
 };
 
 export const logout = () => {
@@ -52,13 +51,13 @@ const renderApp = (comments) => {
           ? `
         <div class="add-form">
           <input type="text" class="add-form-name" value="${userName}" readonly />
-          <textarea class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+          <textarea class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
           <div class="add-form-row">
             <button class="add-form-button" id="add-button">Написать</button>
             <button class="add-form-button" id="logout-button">Выйти</button>
           </div>
         </div>`
-          : `<p class="login-alert">Чтобы добавить комментарий, <span id="login-link" class="link-clickable">авторизуйтесь</span></p>`
+          : `<p class="login-alert">Чтобы добавить комментарий, <a id="login-link" href="#" class="link-clickable">авторизуйтесь</a></p>`
       }
     </div>`;
 
@@ -67,10 +66,11 @@ const renderApp = (comments) => {
   initLikeButtons(comments, renderApp);
   initReplyComments(comments);
 
-  if (!token) {
-    document.getElementById("login-link").addEventListener("click", () => {
-      renderLogin();
-    });
+if (!token) {
+  document.getElementById("login-link").addEventListener("click", (event) => {
+    event.preventDefault(); 
+    renderLogin();
+  });
   } else {
     const addButton = document.getElementById("add-button");
     const textInput = document.querySelector(".add-form-text");
