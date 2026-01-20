@@ -1,31 +1,56 @@
-const Url = "https://wedev-api.sky.pro/api/v1/navetkina-zhanna/comments";
+const personalKey = "navetkina-zhanna";
+const baseUrl = `https://wedev-api.sky.pro/api/v2/${personalKey}`;
+const userUrl = "https://wedev-api.sky.pro/api/user";
 
-export const fetchRender = () => {
-  return fetch(Url, {
+export const getComments = () => {
+  return fetch(baseUrl + "/comments", {
     method: "GET",
   }).then((response) => {
-    if (response.status === 500) {
-      throw new Error("Ошибка сервера, попробуйте позже");
-    }
+    if (response.status === 500) throw new Error("Сервер упал");
     return response.json();
   });
 };
 
-// добавление задачи
-export const fetchComment = ({ name, text }) => {
-  return fetch(Url, {
+// Добавление комментария (нужен токен)
+export const postComment = ({ text, token }) => {
+  return fetch(baseUrl + "/comments", {
     method: "POST",
-    body: JSON.stringify({
-      name,
-      text,
-      forceError: true, //  имитации  ошибки
-    }),
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ text }),
+  }).then((response) => {
+    if (response.status === 400)
+      throw new Error("Комментарий слишком короткий");
+    if (response.status === 500) throw new Error("Сервер упал");
+    return response.json();
+  });
+};
+
+// Авторизация
+export const loginUser = ({ login, password }) => {
+  return fetch(userUrl + "/login", {
+    method: "POST",
+
+    body: JSON.stringify({ login, password }),
+  }).then((response) => {
+    if (response.status === 400) throw new Error("Неверный логин или пароль");
+    return response.json();
+  });
+};
+
+// Регистрация
+export const registration = ({ login, name, password }) => {
+  return fetch(userUrl, {
+    method: "POST",
+
+    body: JSON.stringify({ login, name, password }),
   }).then((response) => {
     if (response.status === 400) {
-      throw new Error("Имя и комментарий должны быть не короче 3 символов");
+      throw new Error("Такой пользователь уже существует");
     }
     if (response.status === 500) {
-      throw new Error("Ошибка сервера, попробуйте позже");
+      throw new Error("Сервер сломался");
     }
     return response.json();
   });

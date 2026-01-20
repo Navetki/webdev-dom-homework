@@ -1,5 +1,4 @@
-const listElement = document.querySelector(".comments");
-const commentInput = document.querySelector(".add-form-text");
+import { token } from "./index.js";
 
 function like(interval = 300) {
   return new Promise((resolve) => {
@@ -9,47 +8,57 @@ function like(interval = 300) {
   });
 }
 
-const pushLikeButtons = (comments) => {
+export const initLikeButtons = (comments, renderApp) => {
   const likeButtons = document.querySelectorAll(".like-button");
 
   for (const likeButton of likeButtons) {
     likeButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      const index = likeButton.dataset.index;
-      const comment = comments[index];
 
-      if (comment.isLikeLoading) {
+      // Проверка авторизации
+      if (!token) {
+        alert("Чтобы ставить лайки, пожалуйста, авторизуйтесь.");
         return;
       }
 
+      const index = likeButton.dataset.index;
+      const comment = comments[index];
+
+      if (comment.isLikeLoading) return;
+
       comment.isLikeLoading = true;
-      renderComments(comments);
+      renderApp(comments);
 
       like(2000).then(() => {
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
         comment.isLiked = !comment.isLiked;
-
         comment.isLikeLoading = false;
-        renderComments(comments);
+
+        renderApp(comments);
       });
     });
   }
 };
 
-const ReplyComments = (comments) => {
+export const initReplyComments = (comments) => {
   const commentElements = document.querySelectorAll(".comment");
+  const commentInput = document.querySelector(".add-form-text");
+
   for (const commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
       const index = commentElement.dataset.index;
       const comment = comments[index];
-      commentInput.value = `> ${comment.text}\n${comment.name}, `;
-      commentInput.focus();
+
+      if (commentInput) {
+        commentInput.value = `> ${comment.text}\n${comment.name}, `;
+        commentInput.focus();
+      }
     });
   }
 };
 
 export const renderComments = (comments) => {
-  const commentsHtml = comments
+  return comments
     .map((comment, index) => {
       return `<li class="comment" data-index="${index}">
       <div class="comment-header">
@@ -72,8 +81,4 @@ export const renderComments = (comments) => {
     </li>`;
     })
     .join("");
-
-  listElement.innerHTML = commentsHtml;
-  pushLikeButtons(comments);
-  ReplyComments(comments);
 };
